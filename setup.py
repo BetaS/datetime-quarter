@@ -1,0 +1,12 @@
+from setuptools import setup, find_packages
+
+
+setup(name="datetime-quarter",
+      version="1.0.0",
+      url="https://github.com/BetaS/datetime-quarter",
+      author="BetaS",
+      author_email="thou1999@gmail.com",
+      description="Simple and lightweight quarter support for python datetime",
+      packages=find_packages(),
+      long_description=open('README.md').read(),
+)
