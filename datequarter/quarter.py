@@ -4,6 +4,9 @@ import datetime
 from typing import Tuple, List, Generator
 
 
+__format__ = "{0} Q{1}"
+
+
 class DateQuarter:
     _year: int = 0
     _quarter: int = 0
@@ -20,7 +23,18 @@ class DateQuarter:
         return cls(date.year, ((date.month-1)//3)+1)
 
     def __repr__(self):
-        return f"<DateQuarter-{self._year},{self._quarter}Q>"
+        return f"<DateQuarter-{self._year},Q{self._quarter}>"
+
+    def __str__(self, locale: str = "en"):
+        if locale == "en":
+            return f"Q{self._quarter} of {self._year}"
+        elif locale == "ko":
+            return f"{self._year}년 {self._quarter}분기"
+        else:
+            return __format__.format(self._year, self._quarter)
+
+    def __hash__(self):
+        return hash((self._year, self._quarter))
 
     def __gt__(self, other):
         if type(other) == datetime.date:
@@ -64,30 +78,13 @@ class DateQuarter:
         return False
 
     def __ge__(self, other):
-        if type(other) == datetime.date:
-            return self.__ge__(DateQuarter.from_date(other))
-        elif type(other) == DateQuarter:
-            if self._year > other._year:
-                return True
-            elif self._year == other._year and self._quarter >= other._quarter:
-                return True
-        else:
-            raise ArithmeticError()
-
-        return False
+        return not self.__lt__(other)
 
     def __le__(self, other):
-        if type(other) == datetime.date:
-            return self.__le__(DateQuarter.from_date(other))
-        elif type(other) == DateQuarter:
-            if self._year < other._year:
-                return True
-            elif self._year == other._year and self._quarter <= other._quarter:
-                return True
-        else:
-            raise ArithmeticError()
+        return not self.__gt__(other)
 
-        return False
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __getitem__(self, item):
         if item == 0:
